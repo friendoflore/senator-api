@@ -151,3 +151,28 @@ class StateSenators(webapp2.RequestHandler):
 		# Write the updated state as a JSON object
 		self.response.write(json.dumps(state.to_dict()))
 		return
+
+class StateSearch(webapp2.RequestHandler):
+	def post(self):
+		'''
+		Search for states
+
+		POST Body Variables:
+		username - String. state name
+		'''
+
+		if 'application/json' not in self.request.accept:
+			self.response.status = 406
+			self.response.status_message = "API only supports JSON"
+			return
+
+		q = db_models.State.query()
+		if self.request.get('name', None):
+			q = q.filter(db_models.State.name == self.request.get('name'))
+
+		searchattempt = q.fetch()
+		results = {}
+		for x in searchattempt:
+			results = {'key' : x.key.id()}
+
+		self.response.write(json.dumps(results))

@@ -16,6 +16,7 @@ class State(Model):
 
 	def to_dict(self):
 		d = super(Model, self).to_dict()
+		d['key'] = self.key.id()
 		d['senators'] = [s.id() for s in d['senators']]
 		return d
 
